@@ -11453,7 +11453,7 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
      *   multiplier: 2
      * });
      */
-    toDataURL: function (options) {
+    toDataURL: function (options, callback) {
       options || (options = { });
 
       var format = options.format || 'png',
@@ -11465,13 +11465,13 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
             width: options.width || 0,
             height: options.height || 0,
           };
-      return this.__toDataURLWithMultiplier(format, quality, cropping, multiplier);
+      return this.__toDataURLWithMultiplier(format, quality, cropping, multiplier, callback);
     },
 
     /**
      * @private
      */
-    __toDataURLWithMultiplier: function(format, quality, cropping, multiplier) {
+    __toDataURLWithMultiplier: function(format, quality, cropping, multiplier, callback) {
 
       var origWidth = this.getWidth(),
           origHeight = this.getHeight(),
@@ -11495,7 +11495,7 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
       else {
         this.renderAll();
       }
-      var data = this.__toDataURL(format, quality, cropping);
+      var data = this.__toDataURL(format, quality, callback);
       originalInteractive && (this.interactive = originalInteractive);
       this.viewportTransform = vp;
       //setDimensions with no option object is taking care of:
@@ -11507,7 +11507,7 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
     /**
      * @private
      */
-    __toDataURL: function(format, quality) {
+    __toDataURL: function(format, quality, callback) {
 
       var canvasEl = this.contextContainer.canvas;
       // to avoid common confusion https://github.com/kangax/fabric.js/issues/806
@@ -11516,8 +11516,8 @@ fabric.PatternBrush = fabric.util.createClass(fabric.PencilBrush, /** @lends fab
       }
 
       var data = supportQuality
-                ? canvasEl.toDataURL('image/' + format, quality)
-                : canvasEl.toDataURL('image/' + format);
+                ? canvasEl.toDataURL('image/' + format, quality, callback)
+                : canvasEl.toDataURL('image/' + format, callback);
 
       return data;
     },
